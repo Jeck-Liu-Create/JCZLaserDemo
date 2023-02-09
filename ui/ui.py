@@ -94,7 +94,7 @@ class View(QGraphicsView):
         super().__init__(parent=parent)
         self._scene = Scene()
         self.setScene(self._scene)
-        self.setSceneRect(-200, -200, 400, 400)
+        self.setSceneRect(-100, -100, 200, 200)
 
         self.setInteractive(True)
         self.setResizeAnchor(QGraphicsView.NoAnchor)
@@ -139,8 +139,3 @@ class View(QGraphicsView):
         super().mouseReleaseEvent(e)
 
 
-if __name__ == "__main__":
-    app = QApplication([])
-    view = View()
-    view.show()
-    app.exec()

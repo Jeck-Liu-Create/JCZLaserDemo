@@ -93,27 +93,27 @@ class Decorator:
             return types.MethodType(self, instance)
 
 class Pen:
-    def __init__(self, penNo = 0) -> None:
+    def __init__(self, penNo: int = 0, **kwargs) -> None:
         self.penNo = penNo
-        self.markLoop = I(-1)
-        self.markSpeed = D(-1)
-        self.powerRatio = D(-1)
-        self.current = D(-1)
-        self.freq = I(-1)
-        self.pluseWidth = D(-1)
-        self.startTC = I(-1)
-        self.laserOffTC = I(-1)
-        self.endTC = I(-1)
-        self.polyTC = I(-1)
-        self.jumpSpeed = D(-1)
-        self.jumpPosTC = I(-1)
-        self.jumpDistTC = I(-1)
-        self.endComp = D(-1)
-        self.accDist = D(-1)
-        self.pointTime = D(-1)
-        self.plusePointMode = B(False)
-        self.pluseNum = I(-1)
-        self.flySpeed = D(-1)
+        self.markLoop = I(kwargs.get("markLoop", -1))
+        self.markSpeed = D(kwargs.get("markSpeed", -1))
+        self.powerRatio = D(kwargs.get("powerRatio", -1))
+        self.current = D(kwargs.get("current", -1))
+        self.freq = I(kwargs.get("freq", -1))
+        self.pluseWidth = D(kwargs.get("pluseWidth", -1))
+        self.startTC = I(kwargs.get("startTC", -1))
+        self.laserOffTC = I(kwargs.get("laserOffTC", -1))
+        self.endTC = I(kwargs.get("endTC", -1))
+        self.polyTC = I(kwargs.get("polyTC", -1))
+        self.jumpSpeed = D(kwargs.get("jumpSpeed", -1))
+        self.jumpPosTC = I(kwargs.get("jumpPosTC", -1))
+        self.jumpDistTC = I(kwargs.get("jumpDistTC", -1))
+        self.endComp = D(kwargs.get("endComp", -1))
+        self.accDist = D(kwargs.get("accDist", -1))
+        self.pointTime = D(kwargs.get("pointTime", -1))
+        self.plusePointMode = B(kwargs.get("plusePointMode", False))
+        self.pluseNum = I(kwargs.get("pluseNum", -1))
+        self.flySpeed = D(kwargs.get("flySpeed", -1))
 
     def asGetParam(self) -> tuple:
         F = C.byref
@@ -192,31 +192,46 @@ class Pen:
         self.flySpeed.value
         )
 
+    def asDict(self) -> dict:
+        d = {}
+        for k, v in self.__dict__.items():
+            if isinstance(k, str) and not k.startswith("_"):
+                if isinstance(v, (int, str)):
+                    d[k] = v
+                else:
+                    d[k] = v.value
+        return d
+
+    @classmethod
+    def fromDict(cls, d: dict) -> "Pen":
+        pen = Pen(**d)
+        return pen
+
 class Hatch:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, **kw) -> None:
         self.name = name
-        self.enableContour = B(True)
-        self.paramIndex = I(1)
-        self.enableHatch = I(1)
-        self.contourFirst = B(False)
-        self.penNo = I(0)
-        self.hatchType = I(1)
-        self.hatchAllCalc = B(True)
-        self.hatchEdge = B(True)
-        self.hatchAverageLine = B(False)
-        self.hatchAngle = D(0)
-        self.hatchLineDist = D(0.03)
-        self.hatchEdgeDist = D(0.1)
-        self.hatchStartOffset = D(0)
-        self.hatchEndOffset = D(0)
-        self.hatchLineReduction = D(0)
-        self.hatchLoopDist = D(0.5)
-        self.edgeLoop = I(0)
-        self.hatchLoopRev = B(False)
-        self.hatchAutoRotate = B(False)
-        self.hatchRotateAngle = D(10)
-        self.hatchCrossMode = B(False)
-        self.cycCount = I(1)
+        self.enableContour = B(kw.get("enableContour", True))
+        self.paramIndex = I(kw.get("paramIndex", 1))
+        self.enableHatch = I(kw.get("enableHatch", 1))
+        self.contourFirst = B(kw.get("contourFirst", False))
+        self.penNo = I(kw.get("penNo", 0))
+        self.hatchType = I(kw.get("hatchType", 1))
+        self.hatchAllCalc = B(kw.get("hatchAllCalc", False))
+        self.hatchEdge = B(kw.get("hatchEdge", True))
+        self.hatchAverageLine = B(kw.get("hatchAverageLine", False))
+        self.hatchAngle = D(kw.get("hatchAngle", 0))
+        self.hatchLineDist = D(kw.get("hatchLineDist", 0.03))
+        self.hatchEdgeDist = D(kw.get("hatchEdgeDist", 0.1))
+        self.hatchStartOffset = D(kw.get("hatchStartOffset", 0))
+        self.hatchEndOffset = D(kw.get("hatchEndOffset", 0))
+        self.hatchLineReduction = D(kw.get("hatchLineReduction", 0))
+        self.hatchLoopDist = D(kw.get("hatchLoopDist", 0.5))
+        self.edgeLoop = I(kw.get("edgeLoop", 0))
+        self.hatchLoopRev = B(kw.get("hatchLoopRev", False))
+        self.hatchAutoRotate = B(kw.get("hatchAutoRotate", False))
+        self.hatchRotateAngle = D(kw.get("hatchRotateAngle", 10))
+        self.hatchCrossMode = B(kw.get("hatchCrossMode", False))
+        self.cycCount = I(kw.get("cycCount", 1))
 
     def asGetParam(self) -> tuple:
         RF = C.byref
@@ -298,11 +313,27 @@ class Hatch:
             self.cycCount
         )
 
+    def asDict(self) -> dict:
+        d = {}
+        for k, v in self.__dict__.items():
+            if isinstance(k, str) and not k.startswith("_"):
+                if isinstance(v, (int, str)):
+                    d[k] = v
+                else:
+                    d[k] = v.value
+        return d
+
+    @classmethod
+    def fromDict(cls, d: dict) -> "Hatch":
+        hatch = Hatch(**d)
+        return hatch
+
 class JCZLaserMarker(QObject):
     sigError = Signal(str, enum.Enum)
     def __init__(self, dllPath: str):
         super().__init__()
         self.dll = None
+        self.ezdFile = ""
         self.dllPath = os.path.abspath(dllPath)
         self.dllDir = os.path.dirname(dllPath)
 
@@ -398,6 +429,7 @@ class JCZLaserMarker(QObject):
 
         :param str filePath: 文件路径
         """
+        self.ezdFile = filePath
         ret =  self.dll.lmc1_LoadEzdFile(filePath)
         errorAutoProcess(self, ret)
 
@@ -448,7 +480,7 @@ class JCZLaserMarker(QObject):
         使用此接口在未重新给板卡上电的情况下可以读取最近一次标刻所用时间
         """
 
-        hour = min = sec = miliSec = C.c_int(-1)
+        hour, min, sec, miliSec = C.c_int(-1), C.c_int(-1), C.c_int(-1), C.c_int(-1)
         ret =  self.dll.lmc1_GetMarkTime(C.byref(hour), C.byref(min), C.byref(sec), C.byref(miliSec))
 
         errorAutoProcess(self, ret)
@@ -563,7 +595,7 @@ class JCZLaserMarker(QObject):
         pass
 
     def mirrorEnt(self, entName: str, centerX: float, centerY: float, mirrorX: bool, mirrorY: bool):
-        ret =  self.dll.lmc1_MirrorEnt(entName, D(centerX), D(centerY),B(mirrorX), B(mirrorY))
+        ret =  self.dll.lmc1_MirrorEnt(entName, D(centerX), D(centerY), B(mirrorX), B(mirrorY))
         errorAutoProcess(self, ret)
 
     def rotateEnt(self, entName: str, centerX: float, centerY: float, angle: float):
@@ -571,7 +603,13 @@ class JCZLaserMarker(QObject):
         errorAutoProcess(self, ret)
 
     def moveEnt(self, entName: str, moveX: float, moveY: float):
-        ret = self.dll.lmc1_MoveEnt(entName, D(moveX), D(moveY) )
+        r, _ = self.getEntSize(entName)
+        x0, y0 = r.bottomLeft()
+        ret = self.dll.lmc1_MoveEnt(entName, D(-x0 + moveX), D(-y0 + moveY) )
+        errorAutoProcess(self, ret)
+
+    def moveEntRelative(self, entName: str, moveX: float, moveY: float):
+        ret = self.dll.lmc1_MoveEnt(entName, D( moveX), D( moveY) )
         errorAutoProcess(self, ret)
 
     def getEntSize(self, entName: str) -> typing.Tuple[Rect, float]:
@@ -589,17 +627,23 @@ class JCZLaserMarker(QObject):
 
     def setSizeAndMove(self, name: str, x: float, y: float, w: float, h: float, delta=0.1):
         abs = math.fabs
+        n = 0
         while True:
             r, _ = self.getEntSize(name)
             cx, cy = r.center()
             x0, y0 = r.bottomLeft()
             w0, h0 = r.size().width(), r.size().height()
 
+            if n > 50: break
+
             if abs(x0 - x) < delta and abs(y0 - y) < delta and abs(w0 - w) < delta  and abs(h0 - h) < delta:
                 break
             else:
                 self.scaleEnt(name, cx, cy, w/w0, h/h0 )
-                self.moveEnt(name, -x0 + x, -y0 + y)
+                self.moveEnt(name, x, y)
+                n += 1
+
+
 
     def scaleEnt(self, entName: str, cx: float, cy: float, sx: float, sy: float):
         ret = self.dll.lmc1_ScaleEnt(entName, D(cx), D(cy), D(sx), D(sy) )
@@ -703,6 +747,10 @@ class JCZLaserMarker(QObject):
         errorAutoProcess(self, ret)
 
         return num.value
+
+    def getPenNumberFromEnt(self, name: str) -> int:
+        n = self.dll.lmc1_GetPenNumberFromEnt(name)
+        return n
 
     def getPenParam(self, pen: Pen) -> Pen:
         ret = self.dll.lmc1_GetPenParam(*pen.asGetParam())
